@@ -1,0 +1,30 @@
+{
+  "name": "flimmer",
+  "version": "0.5.0",
+  "description": "Granular synthesis using the Web Audio API",
+  "main": "src/index.js",
+  "scripts": {
+    "bundle": "webpack",
+    "bundle:watch": "webpack -w",
+    "dev": "webpack-serve --content ./dist --open-path ./index.html",
+    "deploy": "gh-pages -d dist"
+  },
+  "keywords": [],
+  "author": "Philipp Fromme",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.5",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-preset-env": "^1.7.0",
+    "dat.gui": "^0.6.1",
+    "di": "https://github.com/philippfromme/di.js.git",
+    "gh-pages": "^2.0.0",
+    "lodash": "^4.17.4",
+    "raw-loader": "^0.5.1",
+    "simplex-noise": "^2.3.0",
+    "webpack": "^4.19.1",
+    "webpack-cli": "^3.1.1",
+    "webpack-serve": "^2.0.2"
+  }
+}
