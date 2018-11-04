@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>flimmer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:500" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="shortcut icon" href="img/favicon.ico">
+  </head>
+  <body>
+
+    <!-- canvases -->
+    <canvas class="canvas canvas_waveform hide-on-mobile"></canvas>
+    <canvas class="canvas canvas_main hide-on-mobile"></canvas>
+
+    <!-- logo -->
+    <!-- <h3 class="logo hide-on-mobile">flimmer</h3> -->
+
+    <!-- GitHub link -->
+    <!-- <a class="github-link hide-on-mobile" href="https://github.com/philippfromme/flimmer" target="_blank">
+      <img src="img/github-link.png" alt="GitHub Logo">
+    </a> -->
+
+    <!-- overlay about -->
+    <!-- <div class="overlay overlay_about overlay_hidden hide-on-mobile">
+			<h3><i class="fa fa-info-circle" aria-hidden="true"></i> Info</h3>
+			<p>Granular synthesis is awesome. You can play using <i class="fa fa-mouse-pointer" aria-hidden="true"></i> mouse, <i class="fa fa-keyboard-o" aria-hidden="true"></i> keyboard and <i class="fa fa-plug" aria-hidden="true"></i> MIDI keyboard.</p>
+      <p>This project was heavily inspired by <a href="http://zya.github.io/granular/#_=_" target="_blank">this</a> Chrome Experiment.</p>
+			<p>Made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="github.com/philippfromme" target="_blank">Philipp Fromme</a>.</p>
+		</div> -->
+
+    <!-- overlay scripts -->
+    <div class="overlay overlay_scripts hide-on-mobile">
+      <p class="overlay_scripts__text"></p>
+    </div>
+
+    <!-- overlay loader -->
+    <div class="overlay overlay_loader overlay_hidden hide-on-mobile">
+      <ul class="overlay_loader__list"></ul>
+    </div>
+
+    <!-- overlay mobile -->
+    <div class="overlay overlay_mobile overlay_hidden">
+      <h3><i class="fa fa-ban" aria-hidden="true"></i> Uh oh</h3>
+			<p>Granular synthesis is awesome. But it needs some computing power. Try visiting this website with a desktop device. Then you can play using <i class="fa fa-mouse-pointer" aria-hidden="true"></i> mouse, <i class="fa fa-keyboard-o" aria-hidden="true"></i> keyboard and <i class="fa fa-plug" aria-hidden="true"></i> MIDI keyboard. Or just sit back and let the <i class="fa fa-desktop" aria-hidden="true"></i> play.</p>
+      <p>This project was heavily inspired by <a href="http://zya.github.io/granular/#_=_" target="_blank">this</a> Chrome Experiment.</p>
+			<p>Made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="github.com/philippfromme" target="_blank">Philipp Fromme</a>.</p>
+    </div>
+
+    <script>
+      var VERSION = 'v0.6.0';
+      var DEBUG = false;
+
+      if (!DEBUG) {
+        console.log('%c flimmer ' + VERSION + ' ', 'background: black; color: white');
+
+        // disable logging
+        console.log = function() {};
+      }
+
+      // avoid polluting global namespace
+      (function() {
+        function loadScript(src, onLoad) {
+          var script = document.getElementsByTagName('script')[0];
+          var newScript = document.createElement('script');
+
+          newScript.src = src;
+          script.parentNode.insertBefore(newScript, script);
+
+          newScript.onload = function() {
+            onLoad && onLoad();
+          };
+
+          newScript.onError = function() {
+            console.error('unable to load script ' + src);
+          }
+        }
+
+        function loadScripts(scripts, onLoad, onProgress) {
+          var percentageLoadedIncrement = 100 / scripts.length;
+
+          function _innerLoadScript(scripts, index) {
+            if (scripts[index]) {
+
+              // load another script
+              loadScript(scripts[index], function() {
+                var percentageLoaded = Math.floor((index + 1) * percentageLoadedIncrement);
+
+                onProgress && onProgress(percentageLoaded);
+
+                _innerLoadScript(scripts, index + 1);
+              });
+            } else {
+              onLoad && onLoad();
+            }
+          }
+
+          _innerLoadScript(scripts, 0);
+        }
+
+        function hideOverlayLoader() {
+          var loaderScripts = document.getElementsByClassName('overlay_scripts')[0];
+
+          loaderScripts.classList.add('overlay_hidden');
+        }
+
+        function updateOverlayLoader(percentageLoaded) {
+          var loaderScripts = document.getElementsByClassName('overlay_scripts')[0];
+          var percentageLoadedSpan = loaderScripts.getElementsByClassName('overlay_scripts__text')[0];
+
+          percentageLoadedSpan.innerHTML = '<i class="fa fa-download" aria-hidden="true"></i> Loading Scripts ' + percentageLoaded + '%';
+        }
+
+        function isMobileDevice() {
+          return (typeof window.orientation !== "undefined")
+            || (navigator.userAgent.indexOf('IEMobile') !== -1);
+        }
+
+        function hideOnMobile() {
+          var nodesArray = [].slice.call(document.getElementsByClassName('hide-on-mobile'));
+          nodesArray.forEach(function(node) {
+            node.classList.add('hidden');
+          })
+        }
+
+        function showOverlayMobile() {
+          var overlay = document.getElementsByClassName('overlay_mobile')[0];
+          overlay.classList.remove('overlay_hidden');
+        }
+
+        if(true || !isMobileDevice()) {
+          loadScripts(
+            [
+              'js/external/dat.gui.js',
+              'js/external/stats.js',
+              'bundle.js'
+            ],
+            hideOverlayLoader,
+            updateOverlayLoader
+          );
+        } else {
+          hideOverlayLoader();
+          showOverlayMobile();
+        }
+      })();
+    </script>
+  </body>
+</html>
