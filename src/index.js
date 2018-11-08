@@ -1,84 +1,61 @@
-import * as di from 'di';
+import Granular from 'granular-js';
 
-// core
-import Audio from './core/Audio';
-import Canvas from './core/Canvas';
-import Events from './core/Events';
-import Keyboard from './core/Keyboard';
-import Mouse from './core/Mouse';
-import OverlayLoader from './core/OverlayLoader';
-import RequestAudio from './core/RequestAudio';
-import Settings from './core/Settings';
+import p5 from 'p5';
+import 'p5/lib/addons/p5.sound';
 
-// features
-import DragAndDropAudio from './features/drag-and-drop/DragAndDropAudio';
-import HideInterface from './features/HideInterface';
-import OverlayAbout from './features/OverlayAbout';
-import PlayAuto from './features/play-auto/PlayAuto';
-import PlayKeyboard from './features/play-keyboard/PlayKeyboard';
-import PlayMIDI from './features/play-midi/PlayMIDI';
-import PlayMouse from './features/play-mouse/PlayMouse';
-import RenderAutoVoice from './features/play-auto/RenderAutoVoice';
-import RenderDragAndDropAudio from './features/drag-and-drop/RenderDragAndDropAudio';
-import RenderGrains from './features/RenderGrains';
-import RenderGrid from './features/RenderGrid';
-import RenderKeyboardVoices from './features/play-keyboard/RenderKeyboardVoices';
-import RenderMIDIVoices from './features/play-midi/RenderMIDIVoices';
-import RenderMouseVoice from './features/play-mouse/RenderMouseVoice';
-import RenderVoices from './features/RenderVoices';
-import RenderWaveform from './features/RenderWaveform';
-import TouchSupport from './features/touch-support/TouchSupport';
+import getData from './getData';
 
-// MIDI controllers
-import AkaiLPD8 from './features/play-midi/controllers/akai-lpd8/AkaiLPD8';
-import RoliSeaboard from './features/play-midi/controllers/roli-seaboard/RoliSeaboard';
+import Waveform from './Waveform';
+import Grains from './Grains';
 
-const coreModules = [
-  Audio,
-  Canvas,
-  Events,
-  Keyboard,
-  Mouse,
-  OverlayLoader,
-  RequestAudio,
-  Settings
-];
+async function init() {
+  const data = await getData('./example.wav');
 
-const featureModules = [
-  DragAndDropAudio,
-  HideInterface,
-  // OverlayAbout,
-  PlayAuto,
-  PlayKeyboard,
-  // PlayMIDI,
-  PlayMouse,
-  RenderAutoVoice,
-  RenderDragAndDropAudio,
-  RenderGrains,
-  // RenderGrid,
-  RenderKeyboardVoices,
-  // RenderMIDIVoices,
-  RenderMouseVoice,
-  RenderVoices,
-  RenderWaveform,
-  TouchSupport
-];
+  const audioContext = p5.prototype.getAudioContext();
 
-const controllerModules = [
-  // AkaiLPD8,
-  // RoliSeaboard
-];
+  const granular = new Granular({
+    audioContext,
+    envelope: {
+      attack: 0,
+      decay: 0.5
+    },
+    density: 0.9,
+    spread: 0.1,
+    pitch: 1
+  });
 
-const modules = [ ...coreModules, ...featureModules, ...controllerModules ];
+  const delay = new p5.Delay();
 
-const injector = new di.Injector(modules);
+  delay.process(granular, 0.5, 0.5, 3000); // source, delayTime, feedback, filter frequency
 
-modules.forEach(module => injector.get(module));
+  const reverb = new p5.Reverb();
 
-// kick off app
-injector.get(Canvas).run();
-injector.get(RequestAudio).requestUrl('audio/sample-audio.wav', buffer => {
-  injector.get(Audio).setBuffer(buffer);
-}, 'Downloading Sample Audio');
+  // due to a bug setting parameters will throw error
+  // https://github.com/processing/p5.js/issues/3090
+  reverb.process(delay); // source, reverbTime, decayRate in %, reverse
 
-window.injector = injector;
+  reverb.amp(3);
+
+  const distortion = new p5.Distortion(0.1, 'none'); // amount
+
+  distortion.process(reverb);
+
+  const filter = new p5.LowPass();
+  
+  filter.freq(1000);
+  filter.res(10);
+  filter.process(distortion);
+
+  const compressor = new p5.Compressor();
+
+  compressor.process(filter, 0.005, 6, 10, -24, 0.05); // [attack], [knee], [ratio], [threshold], [release]
+
+  granular.on('bufferSet', ({ buffer }) => {
+    const waveform = new Waveform(buffer);
+    const grains = new Grains(buffer, granular);
+  })
+
+  await granular.setBuffer(data);
+}
+
+init();
