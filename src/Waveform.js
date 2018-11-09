@@ -1,16 +1,29 @@
 import p5 from 'p5';
 
+const BAR_WIDTH = 4,
+      GAP = 2;
+
 export default class DrawWaveform {
   constructor(buffer) {
-    buffer = buffer.getChannelData(0);
+    this.buffer = buffer.getChannelData(0);
+
+    const self = this;
 
     let step, amp;
 
-    function s(sketch) {    
+    let drawn = false;
+
+    function s(sketch) {
       sketch.setup = function() {
         sketch.createCanvas(sketch.windowWidth, sketch.windowHeight);
+      };
+    
+      sketch.draw = function() {
+        if (drawn) {
+          return;
+        }
 
-        step = Math.ceil(buffer.length / sketch.width);
+        step = Math.ceil(self.buffer.length / sketch.width);
         amp = sketch.height / 2 - (sketch.height / 20);
         
         sketch.strokeWeight(2);
@@ -27,7 +40,7 @@ export default class DrawWaveform {
     
           // average amp
           for (let j = 0; j < step; j++) {
-            const datum = buffer[ (i * step) + j ];
+            const datum = self.buffer[ (i * step) + j ];
     
             if (datum < min) {
               min = datum;
@@ -49,15 +62,27 @@ export default class DrawWaveform {
 
           lastAmp = (1 + min) * amp + (sketch.height / 20);
 
-          sketch.rect(i, newAmp, 6, Math.max(1, (max - min) * amp), 0);
+          if (i % (BAR_WIDTH + GAP) === 0) {
+            sketch.rect(i, newAmp, BAR_WIDTH, Math.max(1, (max - min) * amp), 8);
+          }
         }
+
+        drawn = true;
       };
-    
-      sketch.draw = function() {
-        
+
+      sketch.windowResized = function() {
+        sketch.resizeCanvas(sketch.windowWidth, sketch.windowHeight);
+
+        drawn = false;
       };
     }
       
     const myp5 = new p5(s);
+  }
+
+  draw(buffer) {
+    this.buffer = buffer;
+
+    this.drawn = false;
   }
 }

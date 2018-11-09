@@ -36,24 +36,34 @@ async function init() {
 
   reverb.amp(3);
 
-  const distortion = new p5.Distortion(0.1, 'none'); // amount
+  // const distortion = new p5.Distortion(0.1, 'none'); // amount
 
-  distortion.process(reverb);
+  // distortion.process(reverb);
 
-  const filter = new p5.LowPass();
+  // const filter = new p5.LowPass();
   
-  filter.freq(1000);
-  filter.res(10);
-  filter.process(distortion);
+  // filter.freq(1000);
+  // filter.res(10);
+  // filter.process(reverb);
 
   const compressor = new p5.Compressor();
 
-  compressor.process(filter, 0.005, 6, 10, -24, 0.05); // [attack], [knee], [ratio], [threshold], [release]
+  compressor.process(reverb, 0.005, 6, 10, -24, 0.05); // [attack], [knee], [ratio], [threshold], [release]
+
+  let waveform, grains;
 
   granular.on('bufferSet', ({ buffer }) => {
-    const waveform = new Waveform(buffer);
-    const grains = new Grains(buffer, granular);
-  })
+
+    if (!waveform) {
+      waveform = new Waveform(buffer);
+    } else {
+      waveform.draw(buffer);
+    }
+
+    if (!grains) {
+      grains = new Grains(buffer, granular);
+    }
+  });
 
   await granular.setBuffer(data);
 }

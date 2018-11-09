@@ -57,7 +57,7 @@ export default class Grains {
           position: map(sketch.mouseX, 0, sketch.width, 0, 1),
           volume: map(sketch.mouseY, sketch.height, 0, 0, 1)
         });
-      }
+      };
 
       sketch.mouseDragged = function() {
         granular.set({
@@ -72,7 +72,11 @@ export default class Grains {
 
       sketch.mouseReleased = function() {
         granular.stopVoice(ID);
-      }
+      };
+
+      sketch.windowResized = function() {
+        sketch.resizeCanvas(sketch.windowWidth, sketch.windowHeight);
+      };
     }
       
     const myp5 = new p5(s);
