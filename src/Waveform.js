@@ -4,14 +4,12 @@ const BAR_WIDTH = 4,
       GAP = 2;
 
 export default class DrawWaveform {
-  constructor(buffer) {
-    this.buffer = buffer.getChannelData(0);
-
+  constructor() {
     const self = this;
 
     let step, amp;
 
-    let drawn = false;
+    this.drawn = false;
 
     function s(sketch) {
       sketch.setup = function() {
@@ -19,9 +17,11 @@ export default class DrawWaveform {
       };
     
       sketch.draw = function() {
-        if (drawn) {
+        if (self.drawn || !self.buffer) {
           return;
         }
+
+        sketch.clear();
 
         step = Math.ceil(self.buffer.length / sketch.width);
         amp = sketch.height / 2 - (sketch.height / 20);
@@ -67,13 +67,13 @@ export default class DrawWaveform {
           }
         }
 
-        drawn = true;
+        self.drawn = true;
       };
 
       sketch.windowResized = function() {
         sketch.resizeCanvas(sketch.windowWidth, sketch.windowHeight);
 
-        drawn = false;
+        self.drawn = false;
       };
     }
       
@@ -81,7 +81,9 @@ export default class DrawWaveform {
   }
 
   draw(buffer) {
-    this.buffer = buffer;
+    console.log('draw waveform!')
+
+    this.buffer = buffer.getChannelData(0);
 
     this.drawn = false;
   }

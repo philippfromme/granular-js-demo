@@ -3,8 +3,7 @@ import p5 from 'p5';
 const ID = 'grains';
 
 export default class Grains {
-  constructor(buffer, granular) {
-    buffer = buffer.getChannelData(0);
+  constructor(granular) {
 
     let grains = [];
 
@@ -106,8 +105,6 @@ function adjustPitch(pitch) {
   if (pitch < 1 - DELTA) {
     newPitch = map(pitch, 0, 1 - DELTA, 0, 1);
   }
-
-  console.log('pitch: ' + newPitch);
 
   return newPitch;
 }

@@ -7,6 +7,7 @@ import getData from './getData';
 
 import Waveform from './Waveform';
 import Grains from './Grains';
+import DragAndDrop from './DragAndDrop';
 
 async function init() {
   const data = await getData('./example.wav');
@@ -50,19 +51,21 @@ async function init() {
 
   compressor.process(reverb, 0.005, 6, 10, -24, 0.05); // [attack], [knee], [ratio], [threshold], [release]
 
-  let waveform, grains;
+  const waveform = new Waveform(),
+        grains = new Grains(granular);
+
+  const canvases = Array.from(document.querySelectorAll('canvas'));
+
+  const dragAndDrop = new DragAndDrop(canvases.pop());
+
+  dragAndDrop.on('dragOver', () => console.log('drag over'));
+
+  dragAndDrop.on('fileRead', ({ data }) => {
+    granular.setBuffer(data);
+  });
 
   granular.on('bufferSet', ({ buffer }) => {
-
-    if (!waveform) {
-      waveform = new Waveform(buffer);
-    } else {
-      waveform.draw(buffer);
-    }
-
-    if (!grains) {
-      grains = new Grains(buffer, granular);
-    }
+    waveform.draw(buffer);
   });
 
   await granular.setBuffer(data);
