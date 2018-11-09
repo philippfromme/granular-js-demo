@@ -23,7 +23,10 @@ export default class Grains {
           const x = map(position, 0, 1, 0, sketch.width),
                 y = map(volume, 0, 1, sketch.height, 0);
     
-          const grain = { x, y };
+          const grain = {
+            x: sketch.mouseX,
+            y: sketch.mouseY
+          };
     
           grains.push(grain);
     
@@ -49,24 +52,24 @@ export default class Grains {
 
       sketch.mousePressed = function() {
         granular.set({
-          pitch: map(sketch.mouseY, sketch.height, 0, 0.5, 1.5)
+          pitch: adjustPitch(map(sketch.mouseY, sketch.height, 0, 0.5, 1.5))
         });
 
         granular.startVoice({
           id: ID,
           position: map(sketch.mouseX, 0, sketch.width, 0, 1),
-          volume: map(sketch.mouseY, sketch.height, 0, 0, 1)
+          volume: 0.7
         });
       };
 
       sketch.mouseDragged = function() {
         granular.set({
-          pitch: map(sketch.mouseY, sketch.height, 0, 0.5, 1.5)
+          pitch: adjustPitch(map(sketch.mouseY, sketch.height, 0, 0.5, 1.5))
         });
 
         granular.updateVoice(ID, {
           position: map(sketch.mouseX, 0, sketch.width, 0, 1),
-          volume: map(sketch.mouseY, sketch.height, 0, 0, 1)
+          volume: 0.7
         });
       };
 
@@ -85,4 +88,26 @@ export default class Grains {
 
 function map(value, inMin, inMax, outMin, outMax) {
   return (value - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
+}
+
+const DELTA = 0.1;
+
+function adjustPitch(pitch) {
+  let newPitch = pitch;
+
+  if (pitch > 1 - DELTA || pitch < 1 + DELTA) {
+    newPitch = 1;
+  }
+
+  if (pitch > 1 + DELTA) {
+    newPitch = map(pitch, 1 + DELTA, 2, 1, 2);
+  }
+
+  if (pitch < 1 - DELTA) {
+    newPitch = map(pitch, 0, 1 - DELTA, 0, 1);
+  }
+
+  console.log('pitch: ' + newPitch);
+
+  return newPitch;
 }
