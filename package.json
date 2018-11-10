@@ -4,7 +4,9 @@
   "description": "A granular-js example",
   "main": "index.js",
   "scripts": {
-    "start": "parcel src/index.html --no-cache --open"
+    "start": "parcel src/index.html --no-cache --open",
+    "build": "parcel build src/index.html --no-cache --public-url ./",
+    "deploy": "gh-pages -d dist"
   },
   "browserslist": [
     "last 1 Chrome version",
@@ -22,6 +24,8 @@
   },
   "devDependencies": {
     "@babel/core": "^7.1.5",
-    "@babel/preset-env": "^7.1.5"
+    "@babel/preset-env": "^7.1.5",
+    "cssnano": "^4.1.7",
+    "gh-pages": "^2.0.1"
   }
 }

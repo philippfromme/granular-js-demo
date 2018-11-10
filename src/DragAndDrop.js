@@ -8,6 +8,8 @@ export default class DragAndDrop {
 
     hint.id = 'drag-and-drop-hint';
 
+    hint.classList.add('pill');
+
     hint.textContent = 'Drop Audio';
 
     document.body.appendChild(hint);
