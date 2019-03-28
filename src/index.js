@@ -8,6 +8,11 @@ import getData from './getData';
 import Waveform from './Waveform';
 import Grains from './Grains';
 import DragAndDrop from './DragAndDrop';
+import AutoPlay from './AutoPlay';
+
+const pillPlay = document.getElementById('pill-play'),
+      pillLoading = document.getElementById('pill-loading'),
+      canvases = document.getElementById('canvases');
 
 async function init() {
   const data = await getData('./example.wav');
@@ -20,7 +25,7 @@ async function init() {
       attack: 0,
       decay: 0.5
     },
-    density: 0.9,
+    density: 0.8,
     spread: 0.1,
     pitch: 1
   });
@@ -37,38 +42,66 @@ async function init() {
 
   reverb.amp(3);
 
-  // const distortion = new p5.Distortion(0.1, 'none'); // amount
-
-  // distortion.process(reverb);
-
-  // const filter = new p5.LowPass();
-  
-  // filter.freq(1000);
-  // filter.res(10);
-  // filter.process(reverb);
-
   const compressor = new p5.Compressor();
 
   compressor.process(reverb, 0.005, 6, 10, -24, 0.05); // [attack], [knee], [ratio], [threshold], [release]
 
-  const waveform = new Waveform(),
-        grains = new Grains(granular);
+  const waveform = new Waveform();
 
-  const canvases = Array.from(document.querySelectorAll('canvas'));
+  new Grains(granular);
 
-  const dragAndDrop = new DragAndDrop(canvases.pop());
+  const dragAndDrop = new DragAndDrop(canvases);
 
-  dragAndDrop.on('dragOver', () => console.log('drag over'));
+  // dragAndDrop.on('dragOver', () => console.log('drag over'));
 
-  dragAndDrop.on('fileRead', ({ data }) => {
-    granular.setBuffer(data);
+  dragAndDrop.on('fileRead', async ({ data }) => {
+    autoPlay.stop();
+
+    pillPlay.textContent = 'Play';
+
+    pillLoading.classList.remove('hidden');
+    pillPlay.classList.add('inactive');
+
+    await granular.setBuffer(data);
+
+    pillLoading.classList.add('hidden');
+    pillPlay.classList.remove('inactive');
   });
 
   granular.on('bufferSet', ({ buffer }) => {
     waveform.draw(buffer);
   });
 
+  const autoPlay = new AutoPlay(granular);
+
+  let playing = false;
+
+  pillPlay.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (playing) {
+      autoPlay.stop();
+
+      pillPlay.textContent = 'Play';
+    } else {
+      autoPlay.start();
+
+      pillPlay.textContent = 'Stop';
+    }
+
+    playing = !playing;
+  });
+
+  pillPlay.addEventListener('mousedown', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+  });
+
   await granular.setBuffer(data);
+
+  pillLoading.classList.add('hidden');
+  pillPlay.classList.remove('inactive');
 }
 
 init();

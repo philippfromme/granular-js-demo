@@ -5,23 +5,27 @@
   <title>granular-js Example</title>
   <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"/>
   <style>
     * {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
+      box-sizing: border-box;
       font-family: 'Roboto', sans-serif;
       font-weight: bold;
+      margin: 0;
+      overflow: hidden;
+      padding: 0;
     }
 
     html, body {
-      background: #111;
+      background-color: blue;
     }
 
     canvas {
-      position: absolute;
-      top: 0;
+      bottom: 0;
       left: 0;
+      position: absolute;
+      right: 0;
+      top: 0;
     }
 
     @keyframes bounce {
@@ -30,71 +34,98 @@
       53%,
       80%,
       to {
-        -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
         animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
-        -webkit-transform: translate3d(-50%, 0, 0);
         transform: translate3d(-50%, 0, 0);
       }
 
       40%,
       43% {
-        -webkit-animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
         animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
-        -webkit-transform: translate3d(-50%, -30px, 0);
         transform: translate3d(-50%, -30px, 0);
       }
 
       70% {
-        -webkit-animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
         animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
-        -webkit-transform: translate3d(-50%, -15px, 0);
         transform: translate3d(-50%, -15px, 0);
       }
 
       90% {
-        -webkit-transform: translate3d(-50%, -4px, 0);
         transform: translate3d(-50%, -4px, 0);
       }
     }
 
     .pill {
-      padding: 4px 12px;
-      font-size: 12px;
+      background-color: white;
       border-radius: 12px;
-      background: #fff;
-      color: #111;
+      box-shadow: 12px 12px 12px white;
+      color: blue;
+      font-size: 12px;
+      padding: 4px 12px;
     }
 
-    #drag-and-drop-hint {
+    .pill-inverted {
+      background-color: blue;
+      border: solid 2px white;
+      color: white;
+    }
+
+    .pill-button {
+      cursor: pointer;
+      outline: none;
+      transition: all 0.2s ease-in-out;
+    }
+
+    .pill-button:hover {
+      box-shadow: 6px 6px 12px white;
+    }
+
+    .centered {
+      left: 50%;
       position: absolute;
       top: 50%;
-      left: 50%;
       transform: translate(-50%, -50%);
-      border: solid 2px #111;
-      -webkit-animation-name: bounce;
-      animation-name: bounce;
-      -webkit-transform-origin: center bottom;
-      transform-origin: center bottom;
-      -webkit-animation-iteration-count: infinite;
-      animation-iteration-count: infinite;
-      -webkit-animation-duration: 2000ms;
-      animation-duration: 2000ms;
     }
 
-    #drag-and-drop-hint:not(.drag-over) {
+    .inactive {
+      pointer-events: none;
+      opacity: 0.5;
+    }
+
+    .hidden {
       display: none;
     }
 
-    #title {
+    .animation-bounce {
+      animation-name: bounce;
+      animation-iteration-count: infinite;
+      animation-duration: 2000ms;
+    }
+
+    #pill-title {
       position: absolute;
-      top: 12px;
-      left: 12px;
+      top: 20px;
+      left: 20px;
+    }
+
+    #pill-play {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translate(-50%);
     }
   </style>
 </head>
 
 <body>
-  <div id="title" class="pill">granular-js demo</div>
+  <div id="canvases"></div>
+
+  <div id="pill-title" class="pill">granular-js demo</div>
+
+  <div id="pill-drop" class="pill animation-bounce centered hidden">Drop Audio</div>
+
+  <div id="pill-loading" class="pill animation-bounce centered">Loading</div>
+
+  <button id="pill-play" class="pill pill-inverted pill-button inactive">Play!</button>
 
   <script src="./index.js"></script>
 </body>

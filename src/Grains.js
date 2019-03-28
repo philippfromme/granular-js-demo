@@ -7,34 +7,37 @@ export default class Grains {
 
     let grains = [];
 
-    const s = (sketch) => {    
+    const s = (sketch) => {
       sketch.setup = function() {
-        sketch.createCanvas(sketch.windowWidth, sketch.windowHeight);
+        const canvas = sketch.createCanvas(sketch.windowWidth, sketch.windowHeight);
+
+        canvas.parent('canvases');
 
         sketch.rectMode(sketch.CENTER);
         sketch.ellipseMode(sketch.CENTER);
         sketch.fill('#FFF');
-        sketch.stroke('#000');
+        sketch.stroke('blue');
         sketch.strokeWeight(2);
         sketch.noCursor();
 
-        granular.on('grainCreated', ({ position, volume }) => {
-          const x = map(position, 0, 1, 0, sketch.width),
-                y = map(volume, 0, 1, sketch.height, 0);
-    
-          const grain = {
-            x: sketch.mouseX,
-            y: sketch.mouseY
+        granular.on('grainCreated', (grain) => {
+          const { position } = grain;
+
+          const x = map(position, 0, 1, 0, sketch.width);
+
+          grain = {
+            x,
+            y: sketch.height / 2
           };
-    
+
           grains.push(grain);
-    
+
           setTimeout(() => {
             grains = grains.filter(g => g !== grain);
           }, 200);
         });
       };
-    
+
       sketch.draw = function() {
         sketch.clear();
 
@@ -50,10 +53,6 @@ export default class Grains {
       };
 
       sketch.mousePressed = function() {
-        granular.set({
-          pitch: adjustPitch(map(sketch.mouseY, sketch.height, 0, 0.5, 1.5))
-        });
-
         granular.startVoice({
           id: ID,
           position: map(sketch.mouseX, 0, sketch.width, 0, 1),
@@ -62,10 +61,6 @@ export default class Grains {
       };
 
       sketch.mouseDragged = function() {
-        granular.set({
-          pitch: adjustPitch(map(sketch.mouseY, sketch.height, 0, 0.5, 1.5))
-        });
-
         granular.updateVoice(ID, {
           position: map(sketch.mouseX, 0, sketch.width, 0, 1),
           volume: 0.7
@@ -80,31 +75,11 @@ export default class Grains {
         sketch.resizeCanvas(sketch.windowWidth, sketch.windowHeight);
       };
     }
-      
-    const myp5 = new p5(s);
+
+    new p5(s);
   }
 }
 
 function map(value, inMin, inMax, outMin, outMax) {
   return (value - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
-}
-
-const DELTA = 0.1;
-
-function adjustPitch(pitch) {
-  let newPitch = pitch;
-
-  if (pitch > 1 - DELTA || pitch < 1 + DELTA) {
-    newPitch = 1;
-  }
-
-  if (pitch > 1 + DELTA) {
-    newPitch = map(pitch, 1 + DELTA, 2, 1, 2);
-  }
-
-  if (pitch < 1 - DELTA) {
-    newPitch = map(pitch, 0, 1 - DELTA, 0, 1);
-  }
-
-  return newPitch;
 }

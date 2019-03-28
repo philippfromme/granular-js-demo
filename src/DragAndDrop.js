@@ -4,20 +4,12 @@ export default class DragAndDrop {
   constructor(element) {
     const events = this.events = new Events();
 
-    const hint = this.hint = document.createElement('div');
-
-    hint.id = 'drag-and-drop-hint';
-
-    hint.classList.add('pill');
-
-    hint.textContent = 'Drop Audio';
-
-    document.body.appendChild(hint);
+    const hint = document.getElementById('pill-drop');
 
     element.addEventListener('drop', e => {
       e.preventDefault();
 
-      this.hint.classList.remove('drag-over');
+      hint.classList.add('hidden');
 
       const dataTransfer = e.dataTransfer;
 
@@ -69,7 +61,7 @@ export default class DragAndDrop {
 
       e.dataTransfer.dropEffect = 'copy';
 
-      this.hint.classList.add('drag-over');
+      hint.classList.remove('hidden');
 
       events.fire('dragOver');
     });
@@ -77,7 +69,7 @@ export default class DragAndDrop {
     element.addEventListener('dragend', e => {
       const dataTransfer = e.dataTransfer;
 
-      this.hint.classList.remove('drag-over');
+      hint.classList.add('hidden');
 
       if (dataTransfer.items) {
         for (let i = 0; i < dataTransfer.items.length; i++) {

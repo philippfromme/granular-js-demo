@@ -4,8 +4,10 @@
   "description": "A granular-js example",
   "main": "index.js",
   "scripts": {
-    "start": "parcel src/index.html --no-cache --open",
+    "all": "npm run assets && npm run build && npm run deploy",
+    "start": "parcel src/index.html --no-cache --no-hmr --open",
     "build": "parcel build src/index.html --no-cache --public-url ./",
+    "assets": "cp -r assets/* dist",
     "deploy": "gh-pages -d dist"
   },
   "browserslist": [
@@ -18,9 +20,10 @@
   "author": "Philipp Fromme",
   "license": "MIT",
   "dependencies": {
-    "granular-js": "^0.4.0",
+    "granular-js": "^0.5.0",
     "lodash": "^4.17.11",
-    "p5": "^0.7.2"
+    "p5": "^0.7.2",
+    "simplex-noise": "^2.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.1.5",

@@ -13,9 +13,11 @@ export default class DrawWaveform {
 
     function s(sketch) {
       sketch.setup = function() {
-        sketch.createCanvas(sketch.windowWidth, sketch.windowHeight);
+        const canvas = sketch.createCanvas(sketch.windowWidth, sketch.windowHeight);
+
+        canvas.parent('canvases');
       };
-    
+
       sketch.draw = function() {
         if (self.drawn || !self.buffer) {
           return;
@@ -25,7 +27,7 @@ export default class DrawWaveform {
 
         step = Math.ceil(self.buffer.length / sketch.width);
         amp = sketch.height / 2 - (sketch.height / 20);
-        
+
         sketch.strokeWeight(2);
         sketch.strokeCap(sketch.ROUND);
         sketch.fill('#FFF');
@@ -37,11 +39,11 @@ export default class DrawWaveform {
 
           let min = 1;
           let max = -1;
-    
+
           // average amp
           for (let j = 0; j < step; j++) {
             const datum = self.buffer[ (i * step) + j ];
-    
+
             if (datum < min) {
               min = datum;
             } else if (datum > max) {
@@ -49,21 +51,14 @@ export default class DrawWaveform {
             }
           }
 
-          const newAmp = (1 + min) * amp + (sketch.height / 20);
-
-          // if (i > 0) {
-
-          //   // upper
-          //   sketch.line(i - 1, lastAmp, i, newAmp);
-
-          //   // lower
-          //   sketch.line(i - 1, sketch.height - lastAmp, i, sketch.height - newAmp);
-          // }
+          let newAmp = (1 + min) * amp + (sketch.height / 20);
 
           lastAmp = (1 + min) * amp + (sketch.height / 20);
 
-          if (i % (BAR_WIDTH + GAP) === 0) {
-            sketch.rect(i, newAmp, BAR_WIDTH, Math.max(1, (max - min) * amp), 8);
+          if (Math.max(1, (max - min) * amp) > 2) {
+            if (i % (BAR_WIDTH + GAP) === 0) {
+              sketch.rect(i, newAmp, BAR_WIDTH, Math.max(1, (max - min) * amp), 8);
+            }
           }
         }
 
@@ -76,13 +71,11 @@ export default class DrawWaveform {
         self.drawn = false;
       };
     }
-      
-    const myp5 = new p5(s);
+
+    new p5(s);
   }
 
   draw(buffer) {
-    console.log('draw waveform!')
-
     this.buffer = buffer.getChannelData(0);
 
     this.drawn = false;
