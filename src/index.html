@@ -12,12 +12,12 @@
       font-family: 'Roboto', sans-serif;
       font-weight: bold;
       margin: 0;
-      overflow: hidden;
       padding: 0;
     }
 
     html, body {
       background-color: blue;
+      overflow: hidden;
     }
 
     canvas {
@@ -56,6 +56,7 @@
 
     .pill {
       background-color: white;
+      border: solid 2px white;
       border-radius: 12px;
       box-shadow: 12px 12px 12px white;
       color: blue;
@@ -102,17 +103,71 @@
     }
 
     #pill-title {
+      left: 20px;
+      opacity: 0.3;
+      pointer-events: none;
       position: absolute;
       top: 20px;
-      left: 20px;
     }
 
     #pill-play {
-      position: absolute;
+      /* position: absolute;
       bottom: 20px;
       left: 50%;
-      transform: translate(-50%);
+      transform: translate(-50%); */
       min-width: 200px;
+    }
+
+    #presets {
+      /* bottom: 20px; */
+      color: white;
+      /* position: absolute;
+      right: 20px; */
+    }
+
+    #presets .preset {
+      display: inline-block;
+      margin-left: 10px;
+      text-align: center;
+    }
+
+    .bottom {
+      bottom: 20px;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      padding-left: 20px;
+      padding-right: 20px;
+      position: absolute;
+      width: 100%;
+    }
+
+    @media (max-width: 480px) {
+      #pill-title {
+        left: 50%;
+        transform: translate(-50%);
+      }
+
+      #pill-play {
+        margin-top: 20px;
+        order: 2;
+        width: 100%;
+      }
+
+      #presets {
+        align-items: center;
+        display: flex;
+        width: 100%;
+      }
+
+      #presets .preset {
+        flex-grow: 1;
+      }
+
+      .bottom {
+        align-items: center;
+        flex-direction: column;
+      }
     }
   </style>
 </head>
@@ -126,7 +181,13 @@
 
   <div id="pill-loading" class="pill animation-bounce centered">Loading</div>
 
-  <button id="pill-play" class="pill pill-inverted pill-button inactive">Play!</button>
+  <div class="bottom">
+    <button id="pill-play" class="pill pill-inverted pill-button inactive">Play!</button>
+
+    <div id="presets">
+      <span class="label">Presets</span>
+    </div>
+  </div>
 
   <script src="./index.js"></script>
 </body>
