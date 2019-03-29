@@ -74,13 +74,11 @@ async function init() {
 
   const autoPlay = new AutoPlay(granular);
 
-  let playing = false;
-
   pillPlay.addEventListener('click', (event) => {
     event.preventDefault();
     event.stopPropagation();
 
-    if (playing) {
+    if (autoPlay.isRunning()) {
       autoPlay.stop();
 
       pillPlay.textContent = 'Play';
@@ -89,13 +87,27 @@ async function init() {
 
       pillPlay.textContent = 'Stop';
     }
-
-    playing = !playing;
   });
 
   pillPlay.addEventListener('mousedown', (event) => {
     event.preventDefault();
     event.stopPropagation();
+  });
+
+  window.addEventListener('keydown', (key) => {
+
+    // space
+    if (event.keyCode === 32) {
+      if (autoPlay.isRunning()) {
+        autoPlay.stop();
+
+        pillPlay.textContent = 'Play';
+      } else {
+        autoPlay.start();
+
+        pillPlay.textContent = 'Stop';
+      }
+    }
   });
 
   await granular.setBuffer(data);

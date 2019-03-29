@@ -11,6 +11,10 @@ export default class AutoPlay {
     this.running = false;
   }
 
+  isRunning() {
+    return this.running;
+  }
+
   start() {
     if (this.running) {
       return;
