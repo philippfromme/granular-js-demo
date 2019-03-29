@@ -56,14 +56,14 @@ export default class Grains {
         granular.startVoice({
           id: ID,
           position: map(sketch.mouseX, 0, sketch.width, 0, 1),
-          volume: 0.7
+          volume: 0.5
         });
       };
 
       sketch.mouseDragged = function() {
         granular.updateVoice(ID, {
           position: map(sketch.mouseX, 0, sketch.width, 0, 1),
-          volume: 0.7
+          volume: 0.5
         });
       };
 

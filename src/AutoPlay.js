@@ -30,7 +30,7 @@ export default class AutoPlay {
     granular.startVoice({
       id: ID,
       position: map(x, -1, 1, 0, 1),
-      volume: 0.7
+      volume: 0.5
     });
 
     const run = () => {
@@ -43,11 +43,11 @@ export default class AutoPlay {
 
       granular.updateVoice(ID, {
         position: map(x, -1, 1, 0, 1),
-        volume: 0.7
+        volume: 0.5
       });
 
       if (this.running) {
-        requestAnimationFrame(run);
+        setTimeout(run);
       }
     }
 
