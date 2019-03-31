@@ -75,9 +75,19 @@
     #pill-title {
       left: 20px;
       opacity: 0.3;
-      pointer-events: none;
       position: absolute;
       top: 20px;
+      transition: all 0.2s ease-in-out;
+    }
+
+    #pill-title:hover {
+      box-shadow: 6px 6px 12px white;
+      opacity: 1;
+    }
+
+    #pill-title a {
+      color: blue;
+      text-decoration: none;
     }
 
     #pill-play {
@@ -138,11 +148,12 @@
 <body>
   <div id="canvases"></div>
 
-  <div id="pill-title" class="pill"><a href="https://github.com/philippfromme/granular-js-demo">granular-js demo</a></div>
+  <div id="pill-title" class="pill"><a target="blank" href="https://github.com/philippfromme/granular-js-demo">granular-js demo</a></div>
 
-  <div id="pill-drop" class="pill animated pulse infinite centered hidden">Drop Audio</div>
-
-  <div id="pill-loading" class="pill animated pulse infinite centered">Loading</div>
+  <div class="centered">
+    <div id="pill-drop" class="pill animated pulse infinite hidden">Drop Audio</div>
+    <div id="pill-loading" class="pill animated pulse infinite">Loading</div>
+  </div>
 
   <div class="bottom">
     <button id="pill-play" class="pill pill-inverted pill-button inactive">Play!</button>

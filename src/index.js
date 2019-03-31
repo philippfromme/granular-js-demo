@@ -31,6 +31,7 @@ const PRESETS = [
 
 const pillPlay = document.getElementById('pill-play'),
       pillLoading = document.getElementById('pill-loading'),
+      pillTitle = document.getElementById('pill-title'),
       canvases = document.getElementById('canvases'),
       presets = document.getElementById('presets');
 
@@ -40,8 +41,7 @@ let autoPlay,
 
 const AUDIO_BUFFER_CACHE = {};
 
-function cancel(event) {
-  event.preventDefault();
+function stopPropagation(event) {
   event.stopPropagation();
 }
 
@@ -209,12 +209,13 @@ async function init() {
 
   const buttons = Array.from(document.querySelectorAll('#presets .preset'));
 
-  buttons.concat(pillPlay).forEach(element => {
+  buttons.concat([ pillPlay, pillTitle ]).forEach(element => {
     [
       'click',
-      'mousedown'
+      'mousedown',
+      'touchstart'
     ].forEach(event => {
-      element.addEventListener(event, cancel);
+      element.addEventListener(event, stopPropagation);
     });
   });
 
