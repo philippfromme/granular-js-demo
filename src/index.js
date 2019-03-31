@@ -221,6 +221,8 @@ async function init() {
   buttons[0].classList.remove('pill-inverted');
 
   await loadPreset(PRESETS[0]);
+
+  pillPlay.classList.add('animated', 'pulse');
 }
 
 init();
