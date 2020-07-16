@@ -21,7 +21,7 @@
   "license": "MIT",
   "dependencies": {
     "granular-js": "^0.6.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.19",
     "p5": "^0.7.2",
     "simplex-noise": "^2.4.0"
   },
